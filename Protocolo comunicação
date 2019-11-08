@@ -1,0 +1,4 @@
+1. Código da ESP32 fazendo serial print com a mesma velocidade da comunicação na Raspberry
+2. No terminal da raspberry: dsmeg | grep tty 
+3. Identificar qual porta está sendo utilizada 
+4. No terminal: python3 comunicacao.py
