@@ -4,6 +4,7 @@ const int SRUS3 = 27;
 const int SRUS4 = 26;
 const int SRUS5 = 33;
 const int Amostras = 500;
+const int Rele1 = 32;
 int umidade1;
 int UR1;
 int umidade2;
@@ -21,6 +22,7 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println(F("Inicializando monitoramento"));
+  pinMode(Rele1, OUTPUT);
 }
 
 void loop()
@@ -32,7 +34,7 @@ void loop()
     umidade1 =  analogRead(SRUS1);
     delay (1);
   }
-  umidade1 = umidade1 / Amostras;
+  //umidade1 = umidade1 / Amostras;
   Serial.print ("Leitura1 ");
   Serial.println(umidade1);
   
@@ -42,7 +44,7 @@ void loop()
     umidade2 =  analogRead(SRUS2);
     delay (1);
   }
-  umidade2 = umidade2 / Amostras;
+  //umidade2 = umidade2 / Amostras;
   Serial.print ("Leitura2 ");
   Serial.println(umidade2);
   
@@ -52,7 +54,7 @@ void loop()
     umidade3 =  analogRead(SRUS3);
     delay (1);
   }
-  umidade3 = umidade3 / Amostras;
+  //umidade3 = umidade3 / Amostras;
   Serial.print ("Leitura3 ");
   Serial.println(umidade3);
   
@@ -62,7 +64,7 @@ void loop()
     umidade4 =  analogRead(SRUS4);
     delay (1);
   }
-  umidade4 = umidade4 / Amostras;
+  //umidade4 = umidade4 / Amostras;
   Serial.print ("Leitura4 ");
   Serial.println(umidade4);
   
@@ -72,15 +74,24 @@ void loop()
     umidade5 =  analogRead(SRUS5);
     delay (1);
   }
-  umidade5 = umidade5 / Amostras;
+  //umidade5 = umidade5 / Amostras;
   Serial.print ("Leitura5 ");
   Serial.println(umidade5);
 
-  UR1 = map (umidade1, 4095, 500, 0, 100);
-  UR2 = map (umidade2, 4095, 500, 0, 100);
-  UR3 = map (umidade3, 4095, 500, 0, 100);
-  UR4 = map (umidade4, 4095, 500, 0, 100);
-  UR5 = map (umidade5, 4095, 500, 0, 100);
+  if ((umidade1 && umidade2 umidade3 && umidade4 && umidade5) >3000 && (umidade1 && umidade2 umidade3 && umidade4 && umidade5)<=4095)
+  {
+    Serial.println("Sementeira não encontrada")
+  }
+
+  else 
+  {
+    
+  
+  UR1 = map (umidade1, 3000, 900, 0, 100);
+  UR2 = map (umidade2, 3000, 900, 0, 100);
+  UR3 = map (umidade3, 3000, 900, 0, 100);
+  UR4 = map (umidade4, 3000, 900, 0, 100);
+  UR5 = map (umidade5, 3000, 900, 0, 100);
   Serial.print ("Mapeamento1 ");
   Serial.println(UR1);
   Serial.print ("Mapeamento2 ");
@@ -110,7 +121,22 @@ void loop()
       acc += med [n];
     }
   }
+  int media_UR = (acc/(len+1));
   Serial.print ("Media UR: ");
-  Serial.print (acc/len); Serial.println("%");
+  Serial.print (media_UR); Serial.println("%");
     delay (2000);
+
+  if (media_UR < 20)
+  
+  {
+    digitalWrite (Rele1, LOW);
+    Serial.println("Acionar bomba");
+  }
+
+  else 
+  {
+    digitalWrite (Rele1, HIGH);
+    Serial.println("Desligar bomba");
+  }
+  }
 }
