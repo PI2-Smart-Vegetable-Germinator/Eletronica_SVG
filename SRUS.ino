@@ -4,7 +4,6 @@ const int SRUS3 = 27;
 const int SRUS4 = 26;
 const int SRUS5 = 33;
 const int Amostras = 500;
-const int Rele1 = 32;
 int umidade1;
 int UR1;
 int umidade2;
@@ -17,12 +16,74 @@ int umidade5;
 int UR5;
 float media_SRUS;
 
+// calcula o tamanho de um vetor ignorando as posições com -1
+int true_size(int a[5]) {
+  int s = 0;
+  for(int i=0; i<5; i++) {
+    s += a[i] > 0 ? 1 : 0;
+  }
+
+  return s;
+}
+
+// calcula a média de 5 sensores recursivamente com base em um treshold inicial
+int media_sensor(int sensor[5], int threshold){
+  int attempt[5][5];
+  int new_threshold = 0;
+  int fl = 0;
+
+  for (int i=0; i<5; i++){
+    attempt[i][0] = sensor[i];
+    attempt[i][1] = -1;
+    attempt[i][2] = -1;
+    attempt[i][3] = -1;
+    attempt[i][4] = -1;
+    
+    for(int j=i+1; j<5; j++){
+      int diff = sensor[j] - sensor[i];
+      diff = diff < 0 ? diff * -1 : diff;
+
+      if(diff <= threshold){
+        attempt[i][j] = sensor[j];
+	fl = 1;
+      }else {
+	new_threshold = new_threshold > 0 ? new_threshold : diff;
+        new_threshold = diff < new_threshold ? diff : new_threshold;
+      }
+    }
+  }
+  
+  int prev = 0;
+  int greater = 0;
+
+  for(int i=0; i<5; i++){
+    int s = true_size(attempt[i]);
+
+    if(s > prev) {
+      prev = s;
+      greater = i;
+    }
+  }
+  
+  int r = 0;
+  int l = true_size(attempt[greater]);
+
+  for(int i=0; i<5; i++) {
+    r += attempt[greater][i] != -1 ? attempt[greater][i] : 0;
+  }
+  
+  if(fl == 0) {
+    return media_sensor(sensor, new_threshold);
+  }
+
+  return l > 0 ? r/l : 0;
+}
+
+
 
 void setup()
 {		
   Serial.begin(9600);
-  Serial.println(F("Inicializando monitoramento"));
-  pinMode(Rele1, OUTPUT);
 }
 
 void loop()
@@ -103,25 +164,9 @@ void loop()
   Serial.print ("Mapeamento5 ");
   Serial.println(UR5); 
   
-  int med [5] = {UR1, UR2, UR3, UR4, UR5};
-  double favg = (med [0] + med [1] + med [2] + med [3] + med [4])/5;
-  int acc = 0;
-  int len = 0;
-  for (int n=0; n <5; n++)
-  {
-    int dist = med [n] - favg;
-    if (dist < 0)
-    {
-      dist *= -1;
-    }
+  int sensor [5] = {UR1, UR2, UR3, UR4, UR5};
+  int media_UR = media_sensor(sensor, 10);
 
-    if (dist <10)
-    {
-      len += 1;
-      acc += med [n];
-    }
-  }
-  int media_UR = (acc/(len+1));
   Serial.print ("Media UR: ");
   Serial.print (media_UR); Serial.println("%");
     delay (2000);
