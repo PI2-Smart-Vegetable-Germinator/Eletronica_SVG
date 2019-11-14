@@ -19,7 +19,7 @@ float media_SRUS;
 
 
 void setup()
-{
+{		
   Serial.begin(9600);
   Serial.println(F("Inicializando monitoramento"));
   pinMode(Rele1, OUTPUT);
@@ -31,54 +31,54 @@ void loop()
 
   for (int i = 0; i < Amostras; i++)
   {
-    umidade1 =  analogRead(SRUS1);
+    umidade1 +=  analogRead(SRUS1) ;
     delay (1);
   }
-  //umidade1 = umidade1 / Amostras;
+  umidade1 = umidade1 / Amostras;
   Serial.print ("Leitura1 ");
   Serial.println(umidade1);
   
   umidade2 = 0;
   for (int j = 0; j < Amostras; j++)
   {
-    umidade2 =  analogRead(SRUS2);
+    umidade2 +=  analogRead(SRUS2);
     delay (1);
   }
-  //umidade2 = umidade2 / Amostras;
+  umidade2 = umidade2 / Amostras;
   Serial.print ("Leitura2 ");
   Serial.println(umidade2);
   
   umidade3 = 0;
   for (int k = 0; k < Amostras; k++)
   {
-    umidade3 =  analogRead(SRUS3);
+    umidade3 +=  analogRead(SRUS3);
     delay (1);
   }
-  //umidade3 = umidade3 / Amostras;
+  umidade3 = umidade3 / Amostras;
   Serial.print ("Leitura3 ");
   Serial.println(umidade3);
   
   umidade4 = 0;
   for (int l = 0; l < Amostras; l++)
   {
-    umidade4 =  analogRead(SRUS4);
+    umidade4 +=  analogRead(SRUS4);
     delay (1);
   }
-  //umidade4 = umidade4 / Amostras;
+  umidade4 = umidade4 / Amostras;
   Serial.print ("Leitura4 ");
   Serial.println(umidade4);
   
   umidade5 = 0;
   for (int m = 0; m < Amostras; m++)
   {
-    umidade5 =  analogRead(SRUS5);
+    umidade5 +=  analogRead(SRUS5);
     delay (1);
   }
-  //umidade5 = umidade5 / Amostras;
+  umidade5 = umidade5 / Amostras;
   Serial.print ("Leitura5 ");
   Serial.println(umidade5);
 
-  if ((umidade1 && umidade2 umidade3 && umidade4 && umidade5) >3000 && (umidade1 && umidade2 umidade3 && umidade4 && umidade5)<=4095)
+  if ((umidade1 && umidade2 && umidade3 && umidade4 && umidade5) >3000)
   {
     Serial.println("Sementeira não encontrada")
   }
@@ -126,17 +126,5 @@ void loop()
   Serial.print (media_UR); Serial.println("%");
     delay (2000);
 
-  if (media_UR < 20)
-  
-  {
-    digitalWrite (Rele1, LOW);
-    Serial.println("Acionar bomba");
-  }
-
-  else 
-  {
-    digitalWrite (Rele1, HIGH);
-    Serial.println("Desligar bomba");
-  }
   }
 }
